@@ -4,8 +4,8 @@
 import sys
 import os
 import shlex
-from yash.constants import *
 from yash.builtins import *
+from yash.constants import *
 
 built_in_cmds = {}
 
@@ -35,8 +35,6 @@ def execute(cmd_tokens):
 
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
                 break
-
-    return SHELL_STATUS_RUN
 
     # 返回状态等待下一条命令
     return SHELL_STATUS_RUN
