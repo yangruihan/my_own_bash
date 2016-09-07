@@ -2,10 +2,35 @@
 #-*- coding:utf-8 -*-
 
 import sys
+import os
+import shlex
 
 # shell 状态常亮
 SHELL_STATUS_RUN = 1
 SHELL_STATUS_STOP = 0
+
+def tokenize(string):
+    return shlex.split(string)
+
+def execute(cmd_tokens):
+    # 创建新进程执行命令
+    pid = os.fork()
+
+    if pid == 0: # 子进程
+        # 执行命令
+        os.execvp(cmd_tokens[0], cmd_tokens)
+    elif pid > 0: # 父进程
+        while True:
+            # 等待其子进程的响应状态
+            wpid, status = os.waitpid(pid, 0)
+
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                break
+
+    return SHELL_STATUS_RUN
+
+    # 返回状态等待下一条命令
+    return SHELL_STATUS_RUN
 
 def shell_loop():
     # 主循环
