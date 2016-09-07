@@ -59,6 +59,7 @@ def shell_loop():
 
 def init():
     register_command('cd', cd)
+    register_command('exit', exit)
 
 def main():
     init()
