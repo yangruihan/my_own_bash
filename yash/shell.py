@@ -4,15 +4,24 @@
 import sys
 import os
 import shlex
+from yash.constants import *
+from yash.builtins import *
 
-# shell 状态常亮
-SHELL_STATUS_RUN = 1
-SHELL_STATUS_STOP = 0
+built_in_cmds = {}
+
+def register_command(name, func):
+    built_in_cmds[name] = func
 
 def tokenize(string):
     return shlex.split(string)
 
 def execute(cmd_tokens):
+    cmd_name = cmd_tokens[0]
+    cmd_args = cmd_tokens[1:]
+
+    if cmd_name in built_in_cmds:
+        return built_in_cmds[cmd_name](cmd_args)
+
     # 创建新进程执行命令
     pid = os.fork()
 
@@ -50,7 +59,11 @@ def shell_loop():
         # 执行该命令并获取新的状态
         status = execute(cmd_tokens)
 
+def init():
+    register_command('cd', cd)
+
 def main():
+    init()
     shell_loop()
 
 if __name__ == '__main__':
